@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, jsonify
 import numpy as np
 import kornia
 from PIL import Image
@@ -16,16 +16,43 @@ def index():
 
 @app.route('/match', methods=['POST'])
 def match_images():
+    # Uploaded images
+    img1_raw = request.files['image1']
+    img2_raw = request.files['image2']
+
+    # Get the selected pretrained model
+    pretrained_model = request.form['model']
+
+    output_img_path = loftr_matching(img1_raw, img2_raw, pretrained_model)
+
+    return render_template('result.html', image_path=output_img_path)
+
+
+@app.route('/match_api', methods=['POST'])
+def match_api():
+    # Uploaded images
+    img1_raw = request.files['image1']
+    img2_raw = request.files['image2']
+
+    # Get the selected pretrained model
+    pretrained_model = request.form['model']
+
+    output_img_path = loftr_matching(img1_raw, img2_raw, pretrained_model)
+
+    output_img_url = request.host_url + output_img_path
+
+    return jsonify(output_img_url=output_img_url)
+
+
+def loftr_matching(img1_raw, img2_raw, pretrained_model='output'):
+
     # Load input images
-    img1 = np.asarray(Image.open(request.files['image1']).convert('L'), dtype=np.uint8)
-    img2 = np.asarray(Image.open(request.files['image2']).convert('L'), dtype=np.uint8)
+    img1 = np.asarray(Image.open(img1_raw).convert('L'), dtype=np.uint8)
+    img2 = np.asarray(Image.open(img2_raw).convert('L'), dtype=np.uint8)
 
     # Convert images to tensors
     img1_tensor = kornia.image_to_tensor(img1/255).unsqueeze(0).float()
     img2_tensor = kornia.image_to_tensor(img2/255).unsqueeze(0).float()
-
-    # Get the selected pretrained model
-    pretrained_model = request.form['model']
 
     # Initialize LOFTR model
     loftr = kornia.feature.LoFTR(pretrained=pretrained_model)
@@ -53,7 +80,7 @@ def match_images():
         matches['keypoints0'], matches['keypoints1'], color,
         text=text, path=output_img_path)
 
-    return render_template('result.html', image_path=output_img_path)
+    return output_img_path
 
 
 def make_matching_figure(img0, img1, mkpts0, mkpts1, color, text=[], dpi=75, path=None):
