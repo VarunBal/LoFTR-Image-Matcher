@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>LOFTR Image Matcher</title>
+</head>
+<body>
+    <h1>LOFTR Image Matcher</h1>
+    <form action="/match" method="post" enctype="multipart/form-data">
+        <label for="image1">Image 1:</label>
+        <input type="file" name="image1" accept="image/*" id="image1" required>
+        <label for="image2">Image 2:</label>
+        <input type="file" name="image2" accept="image/*" id="image2" required>
+        <br>
+        <br>
+        <label for="model">Model:</label>
+        <select name="model" id="model">
+            <option value="outdoor" selected>outdoor</option>
+            <option value="indoor">indoor</option>
+            <option value="indoor_new">indoor_new</option>
+        </select>
+        <br>
+        <br>
+        <input type="submit" value="Match Images">
+    </form>
+</body>
+</html>
