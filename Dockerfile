@@ -3,6 +3,11 @@ FROM python:3.10-slim-buster
 
 WORKDIR /app
 
+RUN apt-get update && apt-get install -y wget \
+    && wget https://download.pytorch.org/whl/cpu/torch-2.0.1%2Bcpu-cp310-cp310-linux_x86_64.whl \
+    && pip install torch-2.0.1+cpu-cp310-cp310-linux_x86_64.whl \
+    && rm torch-2.0.1+cpu-cp310-cp310-linux_x86_64.whl
+
 COPY . .
 
 RUN pip install --default-timeout=100 --no-cache-dir -r requirements.txt
