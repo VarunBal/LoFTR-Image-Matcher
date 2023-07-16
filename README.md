@@ -27,7 +27,7 @@ Start the application using Docker Compose:
 ```
 docker-compose up
 ```
-*Note: Depending on the internet speed it could take a significant time to build the image.* 
+***Note: Depending on the internet speed it could take a significant time to build the image.***
 
 ### Access the LOFTR Image Matcher:
 
@@ -54,4 +54,4 @@ Example API request using Postman:
   - Key: image2, Value: Select File (choose the second input image file).
   - Key: model, Value: outdoor (or any other model choice from 'indoor' and 'indoor_new').
 - Click the "Send" button to perform the request.
-The API response will contain the full URL to the output image.
+- The API response will contain the full URL to the output image.
