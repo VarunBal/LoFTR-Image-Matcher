@@ -5,8 +5,17 @@ from PIL import Image
 import matplotlib
 import matplotlib.pyplot as plt
 import matplotlib.cm as cm
+from time import time
 
 app = Flask(__name__)
+
+ts = time()
+loft_outdoor = kornia.feature.LoFTR(pretrained='outdoor')
+loft_indoor = kornia.feature.LoFTR(pretrained='indoor')
+loft_indoor_new = kornia.feature.LoFTR(pretrained='indoor_new')
+print(f"Total time to load models: {time()-ts}")
+
+loft_models = {'outdoor': loft_outdoor, 'indoor': loft_indoor, 'indoor_new': loft_indoor_new}
 
 
 @app.route('/')
@@ -55,10 +64,13 @@ def loftr_matching(img1_raw, img2_raw, pretrained_model='output'):
     img2_tensor = kornia.image_to_tensor(img2/255).unsqueeze(0).float()
 
     # Initialize LOFTR model
-    loftr = kornia.feature.LoFTR(pretrained=pretrained_model)
+    loftr = loft_models[pretrained_model]
 
     input = {"image0": img1_tensor, "image1": img2_tensor}
+
+    ts = time()
     matches = loftr(input)
+    print(f"Forward pass time: {time()-ts}")
     # print(matches)
 
     # Create colour map
